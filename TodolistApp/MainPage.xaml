@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TodolistApp.ViewModels"
+             x:Class="TodolistApp.MainPage">
+
+    <ContentPage.BindingContext>
+        <local:MainViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid Padding="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Верхний блок -->
+        <Grid Grid.Row="0" Padding="10" ColumnSpacing="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Entry Grid.Column="0" 
+           Placeholder="Введите название задачи" 
+           Text="{Binding NewTaskTitle}"/>
+            <!--Not working-->
+
+            <Button Grid.Column="1" 
+            Text="Добавить" 
+            Command="{Binding AddTaskCommand}"/>
+        </Grid>
+
+        <!-- Список задач -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="10">
+                <CollectionView ItemsSource="{Binding Tasks}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="10" ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Флаг выполнения -->
+                                <CheckBox IsChecked="{Binding IsCompleted}" Grid.Column="0" VerticalOptions="Center" />
+
+                                <!-- Текст задачи -->
+                                <Label Text="{Binding Title}" 
+                                       MaxLines="1" 
+                                       LineBreakMode="TailTruncation"
+                                       VerticalOptions="Center" 
+                                       HorizontalOptions="Start"
+                                       Grid.Column="1">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsCompleted}" Value="True">
+                                            <Setter Property="TextDecorations" Value="Strikethrough"></Setter>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+
+                                <!-- Кнопка удаления -->
+                                <Button Text="🗑️" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainViewModel}}, Path=DeleteTaskCommand}" 
+                                        CommandParameter="{Binding .}"
+                                        Grid.Column="2"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
